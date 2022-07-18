@@ -24,7 +24,7 @@ fn workshop() -> PathBuf {
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
-    /// start path for rmbuild, default is your home directory
+    /// starting path for rmbuild, default is your home directory
     #[clap(value_parser)]
     path: Option<PathBuf>,
 }
@@ -36,13 +36,20 @@ fn main() -> Result<()> {
 
     println!(
         "{}",
-        format!("starting rmbuild from {:?}", root_path).cyan()
+        format!("starting rmbuild from {}...", root_path.display()).cyan()
     );
 
     let packages = cargo_targets(root_path);
+
+    println!("\n{}", "found the following packages:".green());
+
+    packages
+        .iter()
+        .for_each(|package| println!("{}", format!("{}", package.display()).green()));
+
+    println!("\n{}", CMD_HELP.yellow());
+
     let mut it = packages.iter();
-   
-    println!("{}", "find the following packages:".green());
     while let Some(tar) = it.next() {
         let cur_tar = &tar;
         print!("remove {}?:", format!("{}", cur_tar.display()).red());
@@ -54,7 +61,7 @@ fn main() -> Result<()> {
             let s = buffer.trim();
             match s {
                 "y" | "yes" => {
-                    // fs::remove_dir_all(tar)?;
+                    fs::remove_dir_all(tar)?;
                     println!("{}", "removed".green());
                     break;
                 }
@@ -66,11 +73,11 @@ fn main() -> Result<()> {
                 "all" => {
                     println!("{}", "remove the following: ".red());
                     println!("{}", format!("{}", cur_tar.display()).green());
-                    // fs::remove_dir_all(cur_tar)?;
+                    fs::remove_dir_all(cur_tar)?;
 
                     for tar in it {
                         println!("{}", format!("{}", tar.display()).green());
-                        // fs::remove_dir_all(tar)?;
+                        fs::remove_dir_all(tar)?;
                     }
 
                     return Ok(());
@@ -88,3 +95,9 @@ fn main() -> Result<()> {
 
     Ok(())
 }
+
+const CMD_HELP: &str = "please input the following command to remove these targers
+yes|y : remove the current target folder
+no|n  : do not do anything
+all   : remove all the following targets
+";
