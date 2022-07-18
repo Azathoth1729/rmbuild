@@ -19,6 +19,7 @@ First, you need to install the binaries from source code:
 
 ```bash
 git clone https://github.com/Azathoth1729/rmbuild
+cd rmbuild
 cargo install --path .
 ```
 
@@ -38,6 +39,14 @@ ARGS:
 OPTIONS:
     -h, --help       Print help information
     -V, --version    Print version information
+```
+
+## Uninstalling
+
+Simply run if you install the binary from `cargo install`
+
+```bash
+cargo uninstall pngchat
 ```
 
 ## TODO
